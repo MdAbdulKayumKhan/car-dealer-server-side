@@ -25,6 +25,7 @@ async function run() {
     const productsCollection = database.collection("products");
     const ordersCollection = database.collection("orders");
     const usersCollection = database.collection("users");
+    const reviewsCollection = database.collection("reviews");
 
 
     // create a product to insert
@@ -145,6 +146,22 @@ async function run() {
         isAdmin = true;
       }
       res.json({ admin: isAdmin });
+    })
+
+
+    // rating review insert
+    app.post('/review', async (req, res) => {
+      const result = await reviewsCollection.insertOne(req.body);
+      console.log(`added review_id: ${result.insertedId}`);
+      res.json(result);
+    })
+
+    // get rating
+    app.get('/review', async (req, res) => {
+      const sort = { _id: -1 }
+      const cursor = reviewsCollection.find({});
+      const result = await cursor.sort(sort).toArray();
+      res.json(result);
     })
 
   } finally {
